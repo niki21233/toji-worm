@@ -1,0 +1,50 @@
+local assetId = 16572991184 
+local soundId = "rbxassetid://0" -- Sound ID (replace if needed)
+
+-- Load the effect (Folder)
+local effect = game:GetObjects("rbxassetid://" .. assetId)[1]
+
+-- Create and play sound
+local sound = Instance.new("Sound")
+sound.SoundId = soundId
+sound.Parent = game.Workspace
+sound:Play()
+
+-- Ensure the effect was loaded properly
+if effect then
+    local character = game.Players.LocalPlayer.Character
+    if character then
+        -- Wait for character parts to be loaded
+        local torso
+        if character:FindFirstChild("UpperTorso") then
+            torso = character:WaitForChild("UpperTorso")  -- For R15 avatars
+        else
+            torso = character:WaitForChild("Torso")  -- For R6 avatars
+        end
+
+        if torso then
+            -- Parent the effect to the workspace
+            effect.Parent = workspace
+
+            -- Iterate through all parts in the folder and position them
+            for _, part in pairs(effect:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    -- Position the part relative to the torso
+                    part.Position = torso.Position + Vector3.new(0, 0, 0) -- Adjust offset if necessary
+                    part.CanCollide = false -- Disable collision
+                    part.Anchored = false    -- Keep parts unanchored to allow welding
+
+                    -- Create a weld for each part
+                    local weld = Instance.new("Weld")
+                    weld.Part0 = torso -- The part you're welding to (UpperTorso or Torso)
+                    weld.Part1 = part  -- The part you're welding (effect part)
+                    weld.C0 = CFrame.new(0, 0, 0) -- Adjust relative position
+                    weld.Parent = part -- Parent the weld to the part being welded
+                end
+            end
+        end
+    end
+end
+
+wait(100000)  -- Keep the effect alive for a while (adjust timing if needed)
+effect:Destroy()
