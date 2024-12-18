@@ -46,5 +46,4 @@ if effect then
     end
 end
 
-wait(100000)  -- Keep the effect alive for a while (adjust timing if needed)
-effect:Destroy()
+-- The effect will persist until you manually destroy it or the script stops
